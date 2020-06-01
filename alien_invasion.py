@@ -25,6 +25,7 @@ class AlienInvasion:
 		"""Start the main loop for the game."""
 		while True:
 			self._check_events()
+			self.ship.update()
 			self._update_screen()
 
 	def _check_events(self):
@@ -50,7 +51,6 @@ class AlienInvasion:
 		# Update images on the screen and flip to the new screen.
 		self.screen.fill(self.settings.bg_color)
 		self.ship.blitme()
-		self.ship.update()
 		pygame.display.flip()
 
 
