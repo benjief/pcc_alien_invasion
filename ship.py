@@ -37,7 +37,7 @@ class Ship:
 			self.x += self.settings.ship_speed
 		# Note that using an elif block here would be problematic if both
 		# the L and R keys were held down at once.
-		if self.moving_left and self.rect.left >= self.screen_rect.left:
+		if self.moving_left and self.rect.left >= 0:
 			self.x -= self.settings.ship_speed
 
 		# Update rect object from self.x.
