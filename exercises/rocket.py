@@ -29,6 +29,8 @@ class Rocket:
 		# Rocket speed
 		self.rocket_speed = 3.5
 
+		self.rotated_rect = None
+
 
 	def blitme(self):
 		"""Draw the rocket at its current location."""
@@ -52,6 +54,26 @@ class Rocket:
 		# Update rect object from self.x and self.y.
 		self.rect.x = self.x
 		self.rect.y = self.y
+
+
+	def rotate_ccw(self):
+		"""Rotate the rocket counter-clockwise."""
+		self.rotated_rocket = pygame.transform.rotate(self.image, 90)
+		self._rotate_rect()
+
+
+	def rotate_cw(self):
+		"""Rotate the rocket clockwise."""
+		self.rotated_rocket = pygame.transform.rotate(self.image, -90)
+		self._rotate_rect()
+
+
+	def _rotate_rect(self):
+		self.rotated_rect = self.rotated_rocket.get_rect(center=self.rect.center)
+		self.image = self.rotated_rocket
+		self.rect = self.rotated_rect
+		self.x = self.rotated_rect.x
+		self.y = self.rotated_rect.y
 
 
 	def blitme(self):

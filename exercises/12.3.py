@@ -49,6 +49,12 @@ class RocketShip:
 			self.rocket.moving_down = True
 		elif (event.key == pygame.K_q) or (event.key == pygame.K_ESCAPE):
 			sys.exit()
+		elif event.key == pygame.K_r:
+			self.rocket.rotate_cw()
+			print(self.rocket.rect.center)
+		elif event.key == pygame.K_e:
+			self.rocket.rotate_ccw()
+			print(self.rocket.rect.center)
 
 
 	def _check_keyup_events(self, event):
