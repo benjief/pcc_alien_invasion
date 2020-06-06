@@ -11,6 +11,8 @@ class Rocket:
 
 		# Load the rocket image and get its rect.
 		self.image = pygame.image.load('images/rocket_small.png')
+		# Make a copy of the image to use for rotation purposes.
+		self.clean_image = self.image.copy()
 		self.rect = self.image.get_rect()
 
 		# Start each new ship in the centre centre of the screen.
@@ -29,7 +31,13 @@ class Rocket:
 		# Rocket speed
 		self.rocket_speed = 3.5
 
-		self.rotated_rect = None
+		# Rotation flags
+		self.rotating_ccw = False
+		self.rotating_cw = False
+
+		# Rotation angle and speed (degrees)
+		self.rotation_angle = 0
+		self.rotation_speed = 1
 
 
 	def blitme(self):
@@ -38,7 +46,7 @@ class Rocket:
 
 
 	def update(self):
-		"""Update the rocket's position based on movement flags."""
+		"""Update the rocket's position and rotation based on flags."""
 		# Update the rocket's x and y values, not the rect.
 		if self.moving_right and self.rect.right <= self.screen_rect.right:
 			self.x += self.rocket_speed
@@ -51,29 +59,40 @@ class Rocket:
 		if self.moving_down and self.rect.bottom <= self.screen_rect.bottom:
 			self.y += self.rocket_speed
 
+		if (self.rotating_ccw) or (self.rotating_cw):
+			self.rotate()
+			self.rotate_rect()
+
+
 		# Update rect object from self.x and self.y.
 		self.rect.x = self.x
 		self.rect.y = self.y
 
 
-	def rotate_ccw(self):
-		"""Rotate the rocket counter-clockwise."""
-		self.rotated_rocket = pygame.transform.rotate(self.image, 90)
-		self._rotate_rect()
+	def rotate(self):
+		"""Rotate the rocket."""
+		self._calculate_rotation_angle()
+		self.rotated_rocket = pygame.transform.rotate(self.clean_image,
+			self.rotation_angle)
+		self.rotate_rect()
 
 
-	def rotate_cw(self):
-		"""Rotate the rocket clockwise."""
-		self.rotated_rocket = pygame.transform.rotate(self.image, -90)
-		self._rotate_rect()
+	def _calculate_rotation_angle(self):
+		"""Calculate the rotation angle of the rocket."""
+		if self.rotating_ccw:
+			self.rotation_angle += self.rotation_speed
+		if self.rotating_cw:
+			self.rotation_angle -= self.rotation_speed
 
 
-	def _rotate_rect(self):
-		self.rotated_rect = self.rotated_rocket.get_rect(center=self.rect.center)
+	def rotate_rect(self):
+		"""Get the rotated image's rect and assign it self.rect."""
+		self.rotated_rect = self.rotated_rocket.get_rect(
+			center=self.rect.center)
 		self.image = self.rotated_rocket
 		self.rect = self.rotated_rect
-		self.x = self.rotated_rect.x
-		self.y = self.rotated_rect.y
+		self.x = float(self.rotated_rect.x)
+		self.y = float(self.rotated_rect.y)
 
 
 	def blitme(self):
