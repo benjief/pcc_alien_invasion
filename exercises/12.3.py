@@ -92,10 +92,6 @@ class RocketShip:
 		new_bullet = RocketBullet(self)
 		self.bullets.add(new_bullet)
 		new_bullet.calculate_movement()
-		print(new_bullet.rotation_angle)
-		print(new_bullet.rocket.converted_angle)
-		print(new_bullet.x_movement)
-		print(new_bullet.y_movement)
 
 
 	def _update_screen(self):
