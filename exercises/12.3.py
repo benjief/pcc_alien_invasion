@@ -17,6 +17,7 @@ class RocketShip:
 		self.settings = RocketSettings()
 
 		self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+		self.screen_rect = self.screen.get_rect()
 		pygame.display.set_caption("Exercise 12-3")
 
 		self.rocket = Rocket(self)
@@ -28,7 +29,7 @@ class RocketShip:
 		while True:
 			self._check_events()
 			self.rocket.update()
-			self.bullets.update()
+			self._update_bullets()
 			self._update_screen()
 
 
@@ -47,20 +48,12 @@ class RocketShip:
 		"""Respond to keypresses"""
 		if event.key == pygame.K_RIGHT:
 			self.rocket.moving_right = True
-			print(self.rocket.direction)
-			print(self.rocket.rotation_angle)
 		elif event.key == pygame.K_LEFT:
 			self.rocket.moving_left = True
-			print(self.rocket.direction)
-			print(self.rocket.rotation_angle)
 		elif event.key == pygame.K_UP:
 			self.rocket.moving_up = True
-			print(self.rocket.direction)
-			print(self.rocket.rotation_angle)
 		elif event.key == pygame.K_DOWN:
 			self.rocket.moving_down = True
-			print(self.rocket.direction)
-			print(self.rocket.rotation_angle)
 		elif (event.key == pygame.K_q) or (event.key == pygame.K_ESCAPE):
 			sys.exit()
 		elif event.key == pygame.K_e:
@@ -89,9 +82,46 @@ class RocketShip:
 
 	def _fire_bullet(self):
 		"""Create a new bullet and add it to the bullets group."""
-		new_bullet = RocketBullet(self)
-		self.bullets.add(new_bullet)
-		new_bullet.calculate_movement()
+		if len(self.bullets) < self.settings.bullets_allowed:
+			new_bullet = RocketBullet(self)
+			self.bullets.add(new_bullet)
+			new_bullet.calculate_movement()
+
+
+	def _update_bullets(self):
+		"""Update positions of bullets and get rid of old bullets."""
+		self.bullets.update()
+
+		# Get rid of bullets that have disappeared.
+		for bullet in self.bullets.copy():
+			if bullet.direction == 'up':
+				if bullet.rect.bottom <= 0:
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'upright':
+				if (bullet.rect.bottomleft[0] >= self.screen_rect.right or
+						bullet.rect.bottomright[1] <= 0):
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'right':
+				if bullet.rect.left >= self.screen_rect.right:
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'downright':
+				if (bullet.rect.bottomright[0] >= self.screen_rect.right or
+						bullet.rect.bottomleft[1] >= self.screen_rect.bottom):
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'down':
+				if bullet.rect.bottom >= self.screen_rect.bottom:
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'downleft':
+				if (bullet.rect.bottomright[1] >= self.screen_rect.bottom or
+						bullet.rect.bottomleft[0] <= 0):
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'left':
+				if bullet.rect.bottom <= 0:
+					self.bullets.remove(bullet)
+			elif bullet.direction == 'upleft':
+				if (bullet.rect.bottomright[0] <= 0 or
+						bullet.rect.bottomleft[1] <= 0):
+					self.bullets.remove(bullet)
 
 
 	def _update_screen(self):

@@ -14,6 +14,8 @@ class RocketBullet(Sprite):
 		# self.color = self.settings.bullet_color
 		self.rocket = ai_game.rocket
 
+		self.direction = self.rocket.direction
+
 		# Set the bullet's rotation angle to be the same as the rocket's.
 		self.rotation_angle = self.rocket.rotation_angle
 
