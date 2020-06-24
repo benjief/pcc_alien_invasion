@@ -99,28 +99,28 @@ class RocketShip:
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'upright':
 				if (bullet.rect.bottomleft[0] >= self.screen_rect.right or
-						bullet.rect.bottomright[1] <= 0):
+						bullet.rect.bottomleft[1] <= 0):
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'right':
 				if bullet.rect.left >= self.screen_rect.right:
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'downright':
-				if (bullet.rect.bottomright[0] >= self.screen_rect.right or
-						bullet.rect.bottomleft[1] >= self.screen_rect.bottom):
+				if (bullet.rect.topleft[0] >= self.screen_rect.right or
+						bullet.rect.topleft[1] >= self.screen_rect.bottom):
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'down':
-				if bullet.rect.bottom >= self.screen_rect.bottom:
+				if bullet.rect.top >= self.screen_rect.bottom:
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'downleft':
-				if (bullet.rect.bottomright[1] >= self.screen_rect.bottom or
-						bullet.rect.bottomleft[0] <= 0):
+				if (bullet.rect.topright[1] >= self.screen_rect.bottom or
+						bullet.rect.topright[0] <= 0):
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'left':
-				if bullet.rect.bottom <= 0:
+				if bullet.rect.right <= 0:
 					self.bullets.remove(bullet)
 			elif bullet.direction == 'upleft':
 				if (bullet.rect.bottomright[0] <= 0 or
-						bullet.rect.bottomleft[1] <= 0):
+						bullet.rect.bottomright[1] <= 0):
 					self.bullets.remove(bullet)
 
 

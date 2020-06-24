@@ -76,6 +76,7 @@ class Rocket:
 	def _calculate_rotation_angle(self):
 		"""Calculate the rotation angle of the rocket."""
 		if self.rotating_ccw:
+			
 			self.rotation_angle += self.settings.rotation_speed
 			# self.rotation_angle += 90
 		if self.rotating_cw:
