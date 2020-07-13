@@ -16,18 +16,18 @@ class RocketSettings:
 		midnight_blue = (0, 3, 36)
 		black = (0, 0, 0)
 		white = (255, 255, 255)
-		self.bg_color = black
+		self.bg_color = midnight_blue
 
-		#self.bg_image = pygame.image.load('images/space_bg.png')
+		self.bg_image = pygame.image.load('images/space_bg.jpg')
 
 		# Rocket settings
-		self.rocket_speed = 3.5
-		self.rotation_speed = 2
+		self.rocket_speed = 3
+		self.rotation_speed = 3
 		# Starts facing upwards
 		self.rotation_angle = 0
 
 		# Bullet settings
-		self.bullet_speed = 0.5
+		self.bullet_speed = 2
 		self.bullet_width = 3
 		self.bullet_height = 15
 		self.bullet_color = (60, 60, 60)

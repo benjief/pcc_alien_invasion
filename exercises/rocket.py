@@ -34,6 +34,7 @@ class Rocket:
 		self.rotating_cw = False
 		self.rotation_angle = self.settings.rotation_angle
 		self.converted_angle = 0
+		self.rotation_flag = True
 
 		# Direction flag
 		self.direction = 'up'
@@ -69,22 +70,24 @@ class Rocket:
 		"""Rotate the rocket."""
 		self._calculate_rotation_angle()
 		self.rotated_rocket = pygame.transform.rotate(self.clean_image,
-			self.rotation_angle)
+			self.updated_rotation_angle)
 		self._rotate_rect()
 
 
 	def _calculate_rotation_angle(self):
 		"""Calculate the rotation angle of the rocket."""
-		if self.rotating_ccw:
-			
-			self.rotation_angle += self.settings.rotation_speed
+		if self.rotating_ccw :
+			self.updated_rotation_angle = (self.rotation_angle + 
+				self.settings.rotation_speed)
 			# self.rotation_angle += 90
 		if self.rotating_cw:
-			self.rotation_angle -= self.settings.rotation_speed
+			self.updated_rotation_angle = (self.rotation_angle - 
+				self.settings.rotation_speed)																										
 			# self.rotation_angle -= 90
 
 		# Normalize all angles so that they're between 0 and 360
 		self.rotation_angle = self.rotation_angle % 360
+		self.updated_rotation_angle = self.updated_rotation_angle % 360
 
 		# Set the current direction of the rocket.
 		self._set_direction()
@@ -98,38 +101,57 @@ class Rocket:
 		"""
 		if self.rotation_angle == 0:
 			self.direction = 'up'
-			self.converted_angle = self.rotation_angle
 		elif 0 < self.rotation_angle < 90:
 			self.direction = 'upleft'
-			self.converted_angle = self.rotation_angle
 		elif self.rotation_angle == 90:
 			self.direction = 'left'
-			self.converted_angle = self.rotation_angle
 		elif 90 < self.rotation_angle < 180:
 			self.direction = 'downleft'
-			self.converted_angle = abs(self.rotation_angle - 180)
 		elif self.rotation_angle == 180:
 			self.direction = 'down'
-			self.converted_angle = 0
 		elif 180 < self.rotation_angle < 270:
 			self.direction = 'downright'
-			self.converted_angle = self.rotation_angle - 180
 		elif self.rotation_angle == 270:
 			self.direction = 'right'
-			self.converted_angle = 90
 		elif 270 < self.rotation_angle < 360:
 			self.direction = 'upright'
-			self.converted_angle = abs(self.rotation_angle - 360)
 
 		
 	def _rotate_rect(self):
 		"""Get the rotated image's rect and assign it self.rect."""
 		self.rotated_rect = self.rotated_rocket.get_rect(
 			center=self.rect.center)
-		self.image = self.rotated_rocket
-		self.rect = self.rotated_rect
-		self.x = float(self.rotated_rect.x)
-		self.y = float(self.rotated_rect.y)
+
+		if (self.rotated_rect.right <= (self.screen_rect.right + 5) and
+				self.rotated_rect.left >= -5 and
+				self.rotated_rect.bottom <= (self.screen_rect.bottom + 5) and
+				self.rotated_rect.top >= -5):
+			self.image = self.rotated_rocket
+			self.rect = self.rotated_rect
+			self.x = float(self.rotated_rect.x)
+			self.y = float(self.rotated_rect.y)
+			self.rotation_angle = self.updated_rotation_angle
+
+		self._set_converted_angle()
+
+
+	def _set_converted_angle(self):
+		"""
+		Calculates an angle between 0 and 90 degrees for trigonometric
+		calculations in the rocket_bullet class.
+		"""
+		if self.direction == 'downleft':
+			self.converted_angle = abs(self.rotation_angle - 180)
+		elif self.direction == 'down':
+			self.converted_angle = 0
+		elif self.direction == 'downright':
+			self.converted_angle = self.rotation_angle - 180
+		elif self.direction == 'right':
+			self.converted_angle = 90
+		elif self.direction == 'upright':
+			self.converted_angle = abs(self.rotation_angle - 360)
+		else:
+			self.converted_angle = self.rotation_angle
 
 
 	def blitme(self):

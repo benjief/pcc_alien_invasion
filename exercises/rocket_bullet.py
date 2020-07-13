@@ -52,16 +52,16 @@ class RocketBullet(Sprite):
 		Calculate how much to move the bullet's x and y coordinates in order
 		to maintain the prescribed bullet speed.
 		"""
-		if self.rocket.direction == 'up':
+		if self.direction == 'up':
 			self.x_movement = 0
 			self.y_movement = -self.settings.bullet_speed
-		elif self.rocket.direction == 'left':
+		elif self.direction == 'left':
 			self.x_movement = -self.settings.bullet_speed
 			self.y_movement = 0
-		elif self.rocket.direction == 'down':
+		elif self.direction == 'down':
 			self.x_movement = 0
 			self.y_movement = self.settings.bullet_speed
-		elif self.rocket.direction == 'right':
+		elif self.direction == 'right':
 			self.x_movement = self.settings.bullet_speed
 			self.y_movement = 0
 		else:		
@@ -74,14 +74,14 @@ class RocketBullet(Sprite):
 
 	def _calcualate_negative_components(self):
 		"""Sets negative x and y components as required."""
-		if self.rocket.direction == 'upleft':
+		if self.direction == 'upleft':
 			self.x_movement = -self.x_movement
 			self.y_movement = -self.y_movement
-		elif self.rocket.direction == 'downleft':
+		elif self.direction == 'downleft':
 			self.x_movement = -self.x_movement
-		elif self.rocket.direction == 'downright':
+		elif self.direction == 'downright':
 			pass
-		elif self.rocket.direction == 'upright':
+		elif self.direction == 'upright':
 			self.y_movement = -self.y_movement
 		
 

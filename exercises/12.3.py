@@ -64,6 +64,7 @@ class RocketShip:
 			self._fire_bullet()
 
 
+
 	def _check_keyup_events(self, event):
 		"""Respond to key releases."""
 		if event.key == pygame.K_RIGHT:
@@ -86,6 +87,14 @@ class RocketShip:
 			new_bullet = RocketBullet(self)
 			self.bullets.add(new_bullet)
 			new_bullet.calculate_movement()
+			# print(new_bullet.rotation_angle)
+			# # print(self.rocket.rotation_angle)
+			# # print(self.rocket.updated_rotation_angle)
+			# # print(self.rocket.converted_angle)
+			# # print(self.rocket.direction)
+			# # print(new_bullet.rect.center)
+			# # print(self.rocket.rect.center)
+			# # print(self.rocket.rotated_rect.center)
 
 
 	def _update_bullets(self):
@@ -127,7 +136,7 @@ class RocketShip:
 	def _update_screen(self):
 		# Update images on the screen and flip to the new screen.
 		self.screen.fill(self.settings.bg_color)
-		#self.screen.blit(self.settings.bg_image, (0, 0))
+		self.screen.blit(self.settings.bg_image, (0, 0))
 		for bullet in self.bullets.sprites():
 			bullet.draw_bullet()
 		self.rocket.blitme()
