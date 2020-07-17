@@ -23,6 +23,11 @@ class Rocket:
 		self.x = float(self.rect.x)
 		self.y = float(self.rect.y)
 
+		# Speed starts at 0.
+		self.speed = 0
+
+		self.accelerating = False
+
 		# Movement flags
 		self.moving_right = False
 		self.moving_left = False
@@ -47,16 +52,35 @@ class Rocket:
 	def update(self):
 		"""Update the rocket's position and rotation based on flags."""
 		# Update the rocket's x and y values, not the rect.
-		if self.moving_right and self.rect.right <= self.screen_rect.right:
-			self.x += self.settings.rocket_speed
-		# Note that using an elif block here would be problematic if both
-		# the L and R keys were held down at once.
-		if self.moving_left and self.rect.left >= 0:
-			self.x -= self.settings.rocket_speed
-		if self.moving_up and self.rect.top >= 0:
-			self.y -= self.settings.rocket_speed
-		if self.moving_down and self.rect.bottom <= self.screen_rect.bottom:
-			self.y += self.settings.rocket_speed
+		if self.accelerating:
+			if self.moving_right and self.rect.right <= self.screen_rect.right:
+				if self.speed < self.settings.max_speed:
+					self.speed += self.settings.acceleration
+					self.x += self.speed
+				else:
+					self.x += self.settings.max_speed
+
+			# Note that using an elif block here would be problematic if both
+			# the L and R keys were held down at once.
+			if self.moving_left and self.rect.left >= 0:
+				self.x -= self.settings.max_speed
+			if self.moving_up and self.rect.top >= 0:
+				self.y -= self.settings.max_speed
+			if self.moving_down and self.rect.bottom <= self.screen_rect.bottom:
+				self.y += self.settings.max_speed
+		else:
+			if self.moving_right:
+				if self.rect.right <= self.screen_rect.right:
+					if self.speed > 0:
+						self.speed -= self.settings.acceleration
+						self.x += self.speed
+					else:
+						self.moving_right = False
+						self.speed = 0
+				else:
+					self.moving_right = False
+					self.speed = 0
+
 
 		if (self.rotating_ccw) or (self.rotating_cw):
 			self._rotate()

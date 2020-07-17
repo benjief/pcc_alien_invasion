@@ -47,12 +47,16 @@ class RocketShip:
 	def _check_keydown_events(self, event):
 		"""Respond to keypresses"""
 		if event.key == pygame.K_RIGHT:
+			self.rocket.accelerating = True
 			self.rocket.moving_right = True
 		elif event.key == pygame.K_LEFT:
+			self.rocket.accelerating = True
 			self.rocket.moving_left = True
 		elif event.key == pygame.K_UP:
+			self.rocket.accelerating = True
 			self.rocket.moving_up = True
 		elif event.key == pygame.K_DOWN:
+			self.rocket.accelerating = True
 			self.rocket.moving_down = True
 		elif (event.key == pygame.K_q) or (event.key == pygame.K_ESCAPE):
 			sys.exit()
@@ -68,7 +72,8 @@ class RocketShip:
 	def _check_keyup_events(self, event):
 		"""Respond to key releases."""
 		if event.key == pygame.K_RIGHT:
-			self.rocket.moving_right = False
+			self.rocket.accelerating = False
+			# self.rocket.speed = 0
 		elif event.key == pygame.K_LEFT:
 			self.rocket.moving_left = False
 		elif event.key == pygame.K_UP:

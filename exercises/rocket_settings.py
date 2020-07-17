@@ -21,7 +21,8 @@ class RocketSettings:
 		self.bg_image = pygame.image.load('images/space_bg.jpg')
 
 		# Rocket settings
-		self.rocket_speed = 3
+		self.max_speed = 3
+		self.acceleration = 0.01
 		self.rotation_speed = 3
 		# Starts facing upwards
 		self.rotation_angle = 0
