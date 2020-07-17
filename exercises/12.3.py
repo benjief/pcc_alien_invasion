@@ -47,16 +47,20 @@ class RocketShip:
 	def _check_keydown_events(self, event):
 		"""Respond to keypresses"""
 		if event.key == pygame.K_RIGHT:
-			self.rocket.accelerating = True
+			self.rocket.decelerating_right = False
+			self.rocket.accelerating_right = True
 			self.rocket.moving_right = True
 		elif event.key == pygame.K_LEFT:
-			self.rocket.accelerating = True
+			self.rocket.decelerating_left = False
+			self.rocket.accelerating_left = True
 			self.rocket.moving_left = True
 		elif event.key == pygame.K_UP:
-			self.rocket.accelerating = True
+			self.rocket.decelerating_up = False
+			self.rocket.accelerating_up = True
 			self.rocket.moving_up = True
 		elif event.key == pygame.K_DOWN:
-			self.rocket.accelerating = True
+			self.rocket.decelerating_down = False
+			self.rocket.accelerating_down = True
 			self.rocket.moving_down = True
 		elif (event.key == pygame.K_q) or (event.key == pygame.K_ESCAPE):
 			sys.exit()
@@ -72,14 +76,17 @@ class RocketShip:
 	def _check_keyup_events(self, event):
 		"""Respond to key releases."""
 		if event.key == pygame.K_RIGHT:
-			self.rocket.accelerating = False
-			# self.rocket.speed = 0
+			self.rocket.accelerating_right = False
+			self.rocket.decelerating_right = True
 		elif event.key == pygame.K_LEFT:
-			self.rocket.moving_left = False
+			self.rocket.accelerating_left = False
+			self.rocket.decelerating_left = True
 		elif event.key == pygame.K_UP:
-			self.rocket.moving_up = False
+			self.rocket.accelerating_up = False
+			self.rocket.decelerating_up = True
 		elif event.key == pygame.K_DOWN:
-			self.rocket.moving_down = False
+			self.rocket.accelerating_down = False
+			self.rocket.decelerating_down = True
 		elif event.key == pygame.K_e:
 			self.rocket.rotating_ccw = False
 		elif event.key == pygame.K_r:
@@ -92,15 +99,7 @@ class RocketShip:
 			new_bullet = RocketBullet(self)
 			self.bullets.add(new_bullet)
 			new_bullet.calculate_movement()
-			# print(new_bullet.rotation_angle)
-			# # print(self.rocket.rotation_angle)
-			# # print(self.rocket.updated_rotation_angle)
-			# # print(self.rocket.converted_angle)
-			# # print(self.rocket.direction)
-			# # print(new_bullet.rect.center)
-			# # print(self.rocket.rect.center)
-			# # print(self.rocket.rotated_rect.center)
-
+			
 
 	def _update_bullets(self):
 		"""Update positions of bullets and get rid of old bullets."""

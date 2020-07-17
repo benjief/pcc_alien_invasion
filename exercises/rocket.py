@@ -23,10 +23,21 @@ class Rocket:
 		self.x = float(self.rect.x)
 		self.y = float(self.rect.y)
 
-		# Speed starts at 0.
-		self.speed = 0
+		# Speed starts at 0 in all directions.
+		self.speed_right = 0
+		self.speed_up = 0
+		self.speed_left = 0
+		self.speed_down = 0
 
-		self.accelerating = False
+		# Directional acceleration flags
+		self.accelerating_right = False
+		self.accelerating_up = False
+		self.accelerating_left = False
+		self.accelerating_down = False
+		self.decelerating_right = False
+		self.decelerating_up = False
+		self.decelerating_left = False
+		self.decelerating_down = False
 
 		# Movement flags
 		self.moving_right = False
@@ -51,35 +62,81 @@ class Rocket:
 
 	def update(self):
 		"""Update the rocket's position and rotation based on flags."""
-		# Update the rocket's x and y values, not the rect.
-		if self.accelerating:
-			if self.moving_right and self.rect.right <= self.screen_rect.right:
-				if self.speed < self.settings.max_speed:
-					self.speed += self.settings.acceleration
-					self.x += self.speed
-				else:
-					self.x += self.settings.max_speed
-
-			# Note that using an elif block here would be problematic if both
-			# the L and R keys were held down at once.
-			if self.moving_left and self.rect.left >= 0:
+		# Acceleration
+		if (self.accelerating_right and self.moving_right and 
+				self.rect.right <= self.screen_rect.right):
+			if self.speed_right < self.settings.max_speed:
+				self.speed_right += self.settings.acceleration
+				self.x += self.speed_right
+			else:
+				self.x += self.settings.max_speed
+		# Note that using an elif block here would be problematic if both
+		# the L and R keys were held down at once.
+		if self.accelerating_left and self.moving_left and self.rect.left >= 0:
+			if self.speed_left < self.settings.max_speed:
+				self.speed_left += self.settings.acceleration
+				self.x -= self.speed_left
+			else:
 				self.x -= self.settings.max_speed
-			if self.moving_up and self.rect.top >= 0:
+		if self.accelerating_up and self.moving_up and self.rect.top >= 0:
+			if self.speed_up < self.settings.max_speed:
+				self.speed_up += self.settings.acceleration
+				self.y -= self.speed_up
+			else:
 				self.y -= self.settings.max_speed
-			if self.moving_down and self.rect.bottom <= self.screen_rect.bottom:
+		if (self.accelerating_down and self.moving_down and 
+				self.rect.bottom <= self.screen_rect.bottom):
+			if self.speed_down < self.settings.max_speed:
+				self.speed_down += self.settings.acceleration
+				self.y += self.speed_down
+			else:
 				self.y += self.settings.max_speed
-		else:
-			if self.moving_right:
-				if self.rect.right <= self.screen_rect.right:
-					if self.speed > 0:
-						self.speed -= self.settings.acceleration
-						self.x += self.speed
-					else:
-						self.moving_right = False
-						self.speed = 0
+
+		# Deceleration
+		if self.moving_right and self.decelerating_right:
+			if self.rect.right <= self.screen_rect.right:
+				if self.speed_right > 0:
+					self.speed_right -= self.settings.acceleration
+					self.x += self.speed_right
 				else:
 					self.moving_right = False
-					self.speed = 0
+					self.speed_right = 0
+			else:
+				self.moving_right = False
+				self.speed_right = 0
+		if self.moving_left and self.decelerating_left:
+			if self.rect.left >= 0:
+				if self.speed_left > 0:
+					self.speed_left -= self.settings.acceleration
+					self.x -= self.speed_left
+				else:
+					self.moving_left = False
+					self.speed_left = 0
+			else:
+				self.moving_left = False
+				self.speed_left = 0
+		if self.moving_up and self.decelerating_up:
+			if self.rect.top >= 0:
+				if self.speed_up > 0:
+					self.speed_up -= self.settings.acceleration
+					self.y -= self.speed_up
+				else:
+					self.moving_up = False
+					self.speed_up = 0
+			else:
+				self.moving_up = False
+				self.speed_up = 0
+		if self.moving_down and self.decelerating_down:
+			if self.rect.bottom <= self.screen_rect.bottom:
+				if self.speed_down > 0:
+					self.speed_down -= self.settings.acceleration
+					self.y += self.speed_down
+				else:
+					self.moving_down = False
+					self.speed_down = 0
+			else:
+				self.moving_down = False
+				self.speed_down = 0
 
 
 		if (self.rotating_ccw) or (self.rotating_cw):

@@ -28,7 +28,7 @@ class RocketSettings:
 		self.rotation_angle = 0
 
 		# Bullet settings
-		self.bullet_speed = 2
+		self.bullet_speed = 8
 		self.bullet_width = 3
 		self.bullet_height = 15
 		self.bullet_color = (60, 60, 60)
