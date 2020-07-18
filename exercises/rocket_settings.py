@@ -25,7 +25,7 @@ class RocketSettings:
 		self.acceleration = 0.01
 		self.rotation_speed = 3
 		# Starts facing upwards
-		self.rotation_angle = 0
+		self.rotation_angle = 271
 
 		# Bullet settings
 		self.bullet_speed = 8

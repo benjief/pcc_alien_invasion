@@ -10,6 +10,17 @@ class Rocket:
 		self.settings = ai_game.settings
 		self.screen_rect = ai_game.screen.get_rect()
 
+		# Rotation flags and angle
+		self.rotating_ccw = False
+		self.rotating_cw = False
+		self.rotation_angle = self.settings.rotation_angle
+		self.updated_rotation_angle = self.rotation_angle
+
+		# Direction flag
+		self.direction = self._set_direction(self.rotation_angle)
+		self.updated_direction = self._set_direction(self.updated_rotation_angle)
+		self.converted_angle = self._set_converted_angle()
+
 		# Load the rocket image and get its rect.
 		self.image = pygame.image.load('images/rocket_small.png')
 		# Make a copy of the image to use for rotation purposes.
@@ -18,6 +29,9 @@ class Rocket:
 
 		# Start each new ship in the centre centre of the screen.
 		self.rect.center = self.screen_rect.center
+
+		# Rotate the ship.
+		self._rotate()
 
 		# Store decimal values for the ship's horizontal and vertical positions.
 		self.x = float(self.rect.x)
@@ -29,11 +43,7 @@ class Rocket:
 		self.speed_left = 0
 		self.speed_down = 0
 
-		# Directional acceleration flags
-		self.accelerating_right = False
-		self.accelerating_up = False
-		self.accelerating_left = False
-		self.accelerating_down = False
+		# Directional flags
 		self.decelerating_right = False
 		self.decelerating_up = False
 		self.decelerating_left = False
@@ -45,15 +55,6 @@ class Rocket:
 		self.moving_up = False
 		self.moving_down = False
 
-		# Rotation flags and angle
-		self.rotating_ccw = False
-		self.rotating_cw = False
-		self.rotation_angle = self.settings.rotation_angle
-		self.converted_angle = 0
-		self.rotation_flag = True
-
-		# Direction flag
-		self.direction = 'up'
 
 	def blitme(self):
 		"""Draw the rocket at its current location."""
@@ -63,8 +64,8 @@ class Rocket:
 	def update(self):
 		"""Update the rocket's position and rotation based on flags."""
 		# Acceleration
-		if (self.accelerating_right and self.moving_right and 
-				self.rect.right <= self.screen_rect.right):
+		if (self.moving_right and self.rect.right <= self.screen_rect.right and
+				self.decelerating_right == False):
 			if self.speed_right < self.settings.max_speed:
 				self.speed_right += self.settings.acceleration
 				self.x += self.speed_right
@@ -72,20 +73,22 @@ class Rocket:
 				self.x += self.settings.max_speed
 		# Note that using an elif block here would be problematic if both
 		# the L and R keys were held down at once.
-		if self.accelerating_left and self.moving_left and self.rect.left >= 0:
+		if (self.moving_left and self.rect.left >= 0 and 
+				self.decelerating_left == False):
 			if self.speed_left < self.settings.max_speed:
 				self.speed_left += self.settings.acceleration
 				self.x -= self.speed_left
 			else:
 				self.x -= self.settings.max_speed
-		if self.accelerating_up and self.moving_up and self.rect.top >= 0:
+		if (self.moving_up and self.rect.top >= 0 and 
+				self.decelerating_up == False):
 			if self.speed_up < self.settings.max_speed:
 				self.speed_up += self.settings.acceleration
 				self.y -= self.speed_up
 			else:
 				self.y -= self.settings.max_speed
-		if (self.accelerating_down and self.moving_down and 
-				self.rect.bottom <= self.screen_rect.bottom):
+		if (self.moving_down and self.rect.bottom <= self.screen_rect.bottom and
+				self.decelerating_down == False):
 			if self.speed_down < self.settings.max_speed:
 				self.speed_down += self.settings.acceleration
 				self.y += self.speed_down
@@ -93,7 +96,7 @@ class Rocket:
 				self.y += self.settings.max_speed
 
 		# Deceleration
-		if self.moving_right and self.decelerating_right:
+		if self.decelerating_right:
 			if self.rect.right <= self.screen_rect.right:
 				if self.speed_right > 0:
 					self.speed_right -= self.settings.acceleration
@@ -104,7 +107,7 @@ class Rocket:
 			else:
 				self.moving_right = False
 				self.speed_right = 0
-		if self.moving_left and self.decelerating_left:
+		if self.decelerating_left:
 			if self.rect.left >= 0:
 				if self.speed_left > 0:
 					self.speed_left -= self.settings.acceleration
@@ -115,7 +118,7 @@ class Rocket:
 			else:
 				self.moving_left = False
 				self.speed_left = 0
-		if self.moving_up and self.decelerating_up:
+		if self.decelerating_up:
 			if self.rect.top >= 0:
 				if self.speed_up > 0:
 					self.speed_up -= self.settings.acceleration
@@ -126,7 +129,7 @@ class Rocket:
 			else:
 				self.moving_up = False
 				self.speed_up = 0
-		if self.moving_down and self.decelerating_down:
+		if self.decelerating_down:
 			if self.rect.bottom <= self.screen_rect.bottom:
 				if self.speed_down > 0:
 					self.speed_down -= self.settings.acceleration
@@ -137,7 +140,6 @@ class Rocket:
 			else:
 				self.moving_down = False
 				self.speed_down = 0
-
 
 		if (self.rotating_ccw) or (self.rotating_cw):
 			self._rotate()
@@ -160,42 +162,41 @@ class Rocket:
 		if self.rotating_ccw :
 			self.updated_rotation_angle = (self.rotation_angle + 
 				self.settings.rotation_speed)
-			# self.rotation_angle += 90
 		if self.rotating_cw:
 			self.updated_rotation_angle = (self.rotation_angle - 
 				self.settings.rotation_speed)																										
-			# self.rotation_angle -= 90
 
 		# Normalize all angles so that they're between 0 and 360
 		self.rotation_angle = self.rotation_angle % 360
 		self.updated_rotation_angle = self.updated_rotation_angle % 360
 
-		# Set the current direction of the rocket.
-		self._set_direction()
+		# Set the current direction and updated directions of the rocket.
+		self.direction = self._set_direction(self.rotation_angle)
+		self.updated_direction = self._set_direction(self.updated_rotation_angle)
 
 
-	def _set_direction(self):
+	def _set_direction(self, angle):
 		"""
 		Calculates which direction the rocket is currently facing.
 		Also normalized the rotation angle to be between 0 and 90 degrees, if 
 		it isn't already.
 		"""
-		if self.rotation_angle == 0:
-			self.direction = 'up'
-		elif 0 < self.rotation_angle < 90:
-			self.direction = 'upleft'
-		elif self.rotation_angle == 90:
-			self.direction = 'left'
-		elif 90 < self.rotation_angle < 180:
-			self.direction = 'downleft'
-		elif self.rotation_angle == 180:
-			self.direction = 'down'
-		elif 180 < self.rotation_angle < 270:
-			self.direction = 'downright'
-		elif self.rotation_angle == 270:
-			self.direction = 'right'
-		elif 270 < self.rotation_angle < 360:
-			self.direction = 'upright'
+		if angle == 0:
+			return 'up'
+		elif 0 < angle < 90:
+			return 'upleft'
+		elif angle == 90:
+			return 'left'
+		elif 90 < angle < 180:
+			return 'downleft'
+		elif angle == 180:
+			return 'down'
+		elif 180 < angle < 270:
+			return 'downright'
+		elif angle == 270:
+			return 'right'
+		elif 270 < angle < 360:
+			return 'upright'
 
 		
 	def _rotate_rect(self):
@@ -212,6 +213,7 @@ class Rocket:
 			self.x = float(self.rotated_rect.x)
 			self.y = float(self.rotated_rect.y)
 			self.rotation_angle = self.updated_rotation_angle
+			self.direction = self.updated_direction
 
 		self._set_converted_angle()
 
