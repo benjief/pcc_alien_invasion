@@ -31,17 +31,11 @@ class Rocket:
 		self.rect.center = self.screen_rect.center
 
 		# Rotate the ship.
-		self._rotate()
+		self.rotate()
 
 		# Store decimal values for the ship's horizontal and vertical positions.
 		self.x = float(self.rect.x)
 		self.y = float(self.rect.y)
-
-		# Speed starts at 0 in all directions.
-		self.speed_right = 0
-		self.speed_up = 0
-		self.speed_left = 0
-		self.speed_down = 0
 
 		# Directional flags
 		self.decelerating_right = False
@@ -55,6 +49,12 @@ class Rocket:
 		self.moving_up = False
 		self.moving_down = False
 
+		# Directional speeds
+		self.speed_right = 0
+		self.speed_up = 0
+		self.speed_left = 0
+		self.speed_down = 0
+
 
 	def blitme(self):
 		"""Draw the rocket at its current location."""
@@ -62,40 +62,70 @@ class Rocket:
 
 
 	def update(self):
-		"""Update the rocket's position and rotation based on flags."""
+		"""
+		Update the rocket's position and rotation.
+		"""
 		# Acceleration
-		if (self.moving_right and self.rect.right <= self.screen_rect.right and
-				self.decelerating_right == False):
+		if (self.moving_right or self.moving_left or self.moving_up or 
+				self.moving_down):
+			self.move()	
+
+		# Deceleration
+		if (self.decelerating_right or self.decelerating_left or 
+				self.decelerating_up or self.decelerating_down):
+			self.decelerate()
+
+		# Rotation
+		if self.rotating_ccw or self.rotating_cw:
+			self.rotate()
+
+		# Update rect object from self.x and self.y.
+		self.rect.x = self.x
+		self.rect.y = self.y
+
+
+	def move(self):
+		"""
+		Moves the rocket if it's within the screen's boundary, based on
+		movement flags, acceleration and max speed.
+		"""
+		if (self.decelerating_right == False and self.moving_right and 
+				self.rect.right <= self.screen_rect.right):
 			if self.speed_right < self.settings.max_speed:
 				self.speed_right += self.settings.acceleration
 				self.x += self.speed_right
 			else:
 				self.x += self.settings.max_speed
-		# Note that using an elif block here would be problematic if both
-		# the L and R keys were held down at once.
-		if (self.moving_left and self.rect.left >= 0 and 
-				self.decelerating_left == False):
+		if (self.decelerating_left == False and self.moving_left and 
+			self.rect.left >= 0):
 			if self.speed_left < self.settings.max_speed:
 				self.speed_left += self.settings.acceleration
 				self.x -= self.speed_left
 			else:
 				self.x -= self.settings.max_speed
-		if (self.moving_up and self.rect.top >= 0 and 
-				self.decelerating_up == False):
+		if (self.decelerating_up == False and self.moving_up and 
+			self.rect.top >= 0):
 			if self.speed_up < self.settings.max_speed:
 				self.speed_up += self.settings.acceleration
 				self.y -= self.speed_up
 			else:
 				self.y -= self.settings.max_speed
-		if (self.moving_down and self.rect.bottom <= self.screen_rect.bottom and
-				self.decelerating_down == False):
+		if (self.decelerating_down == False and self.moving_down and 
+			self.rect.bottom <= self.screen_rect.bottom):
 			if self.speed_down < self.settings.max_speed:
 				self.speed_down += self.settings.acceleration
 				self.y += self.speed_down
 			else:
 				self.y += self.settings.max_speed
 
-		# Deceleration
+
+	def decelerate(self):
+		"""
+		Decelerates the rocket by decreasing the speed by the acceleration value
+		in the movement direction. If the rocket is at a screen boundary, its
+		movement flag corresponding to that boundary will be set to False and 
+		its speed in that direction set to zero.
+		"""
 		if self.decelerating_right:
 			if self.rect.right <= self.screen_rect.right:
 				if self.speed_right > 0:
@@ -141,15 +171,8 @@ class Rocket:
 				self.moving_down = False
 				self.speed_down = 0
 
-		if (self.rotating_ccw) or (self.rotating_cw):
-			self._rotate()
 
-		# Update rect object from self.x and self.y.
-		self.rect.x = self.x
-		self.rect.y = self.y
-
-
-	def _rotate(self):
+	def rotate(self):
 		"""Rotate the rocket."""
 		self._calculate_rotation_angle()
 		self.rotated_rocket = pygame.transform.rotate(self.clean_image,

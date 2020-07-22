@@ -66,10 +66,6 @@ class RocketShip:
 			self.rocket.rotating_cw = True
 		elif event.key == pygame.K_SPACE:
 			self._fire_bullet()
-			print(self.rocket.rotation_angle)
-			print(self.rocket.updated_rotation_angle)
-			print(self.rocket.direction)
-
 
 
 	def _check_keyup_events(self, event):
